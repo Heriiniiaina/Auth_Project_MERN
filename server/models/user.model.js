@@ -26,8 +26,14 @@ const UserSchema = mongoose.Schema({
     verificationCodeValidity:{
         type:Number,
         select:false
+    },
+    forgotPasswordToken:{
+        type:String,
+        select:false
     }
 },
 {
     timestamps:true
 })
+
+export const User = mongoose.model("User",UserSchema)
