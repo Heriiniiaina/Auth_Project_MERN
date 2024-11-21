@@ -1,6 +1,7 @@
 import { registerSchema } from "../middlewares/validator.js"
 import { User } from "../models/user.model.js"
 import PasswordHelper from "../utils/password.helper.js"
+import TokenHelper from "../utils/token.helper.js"
 
 export const register = async (req,res,next)=>{
      const {email,password,username} = req.body
@@ -27,6 +28,34 @@ export const register = async (req,res,next)=>{
             success:true,
             message:"User registered"
         })
+    } catch (error) {
+        return next(error)
+    }
+}
+
+export const login = async (req,res,next)=>{
+    const {email,password} = req.body
+    try {
+        const user = await User.findOne({email})
+        if(!user)
+            return res.status(400).json({
+                success:false,
+                message:"There is no user with this email."
+            })
+        const isPasswordMatch = await PasswordHelper.comparePassword(password,user.password)
+        if(!isPasswordMatch)
+            return res.status(400).json({
+                success:false,
+                message:"Wrong password"
+            })
+        const token = await TokenHelper.generateToken(user)
+        res.cookie("Authorization","Bearer " + token,
+            {expires:new Date(Date.now() + 8* 3600000),secure:process.env.NODE_ENV=="production",httpOnly:process.env.NODE_ENV})
+            .json({
+                success:true,
+                token,
+                message:"Login successfull"
+            })
     } catch (error) {
         return next(error)
     }

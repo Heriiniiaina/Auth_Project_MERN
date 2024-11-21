@@ -5,6 +5,10 @@ class PasswordHelper{
         const hashedPassword = await bcrypt.hash(password,salt)
         return hashedPassword
     }
+    static async comparePassword(password,hashedPassword){
+        const isMatch = await bcrypt.compare(password,hashedPassword)
+        return isMatch
+    }
 }
 
 export default PasswordHelper
