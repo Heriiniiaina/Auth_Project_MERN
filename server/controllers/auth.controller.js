@@ -74,5 +74,22 @@ export const logout = async (req,res,next)=>{
 }
 
 export const sendValidationCode = async (req,res,next)=>{
-    
+    const {email} = req.body
+    if(!email) return res.status(400).json({message:"Email not found"})
+    try {
+        const user = await User.findOne({email:email})
+        if(!user)
+            return res.status(400).json({
+                success:false,
+                message:"There is no user with this email."
+        })
+        if(user.verified)
+            return res.status(400).json({
+                success:false,
+                message:"User already verified"
+            })
+        const verificationCode = Math.floor(Math.random() * 1000000).toString()
+    } catch (error) {
+        next(error)
+    }
 }
