@@ -1,5 +1,6 @@
 import { registerSchema } from "../middlewares/validator.js"
 import { User } from "../models/user.model.js"
+import { transport } from "../services/sendMail.service.js"
 import PasswordHelper from "../utils/password.helper.js"
 import TokenHelper from "../utils/token.helper.js"
 
@@ -89,6 +90,12 @@ export const sendValidationCode = async (req,res,next)=>{
                 message:"User already verified"
             })
         const verificationCode = Math.floor(Math.random() * 1000000).toString()
+        let info = await transport.sendMail({
+            from:process.env.NODE_CODE_SENDING_EMAIL_ADRESS,
+            to:user.email,
+            subject:"<h2> Verification code </h2>",
+            html:"<h1>" + verificationCode + "</h1>"
+        })
     } catch (error) {
         next(error)
     }
