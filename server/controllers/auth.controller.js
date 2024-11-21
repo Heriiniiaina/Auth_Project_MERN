@@ -2,7 +2,7 @@ import { registerSchema } from "../middlewares/validator.js"
 import { User } from "../models/user.model.js"
 import PasswordHelper from "../utils/password.helper.js"
 
-export const register = async (req,res)=>{
+export const register = async (req,res,next)=>{
      const {email,password,username} = req.body
      if(!email || !password || !username)
         return res.status(400).json({
@@ -11,10 +11,15 @@ export const register = async (req,res)=>{
     try {
         const {error,value} = registerSchema.validate({email,password,username})
         if(error){
-            console.log(error.name)
-            return res.status(400).json({message:error.details[0].message})
-
+            throw error
         }
+        const existUser = await User.findOne({email})
+        if(existUser)
+            return res.status(400).json({
+                success:false,
+                message:"Email is already used by another account"
+            })
+
         const hashedPassword =await PasswordHelper.hashPassword(password)
         const newUser = new User({email,password:hashedPassword,username})
         await newUser.save()
@@ -23,6 +28,6 @@ export const register = async (req,res)=>{
             message:"User registered"
         })
     } catch (error) {
-        console.log(error)
+        return next(error)
     }
 }
