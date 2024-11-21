@@ -65,3 +65,10 @@ export const login = async (req,res,next)=>{
         return next(error)
     }
 }
+
+export const logout = async (req,res,next)=>{
+    res.clearCookie("Authorization").status(200).json({
+        success:true,
+        message:"Logout successfull"
+    })
+}
