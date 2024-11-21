@@ -13,7 +13,8 @@ export const registerSchema = Joi.object({
         "string.pattern.base": "Password must contain at least one lowercase letter, one uppercase letter, one digit, and one special character."
 
     }),
-    email:Joi.string().email().messages({
+    email:Joi.string().email().required().messages({
         "string.email":"Please provid a valid email adress"
     })
 }) 
+
