@@ -204,8 +204,9 @@ export const sendForgotPasswordToken =async (req,res,next)=>{
                 message:"Reset password send to " + user.email
             })
         }
-        res.status(200).json({
-
+        res.status(400).json({
+            success:false,
+            message:"Something wrong"
         })
     } catch (error) {
         console.log(error)
