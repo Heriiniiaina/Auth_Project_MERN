@@ -120,5 +120,55 @@ export const sendValidationCode = async (req,res,next)=>{
 }
 
 export const verifyVerificationCode = async(req,res,next)=>{
-    
+    const {email,providedCode} = req.body
+    if(!email || !providedCode)
+        return res.status(400).json({
+            success:true,
+            message:"Please provide code"
+        })
+    try {
+        const user = await User.findOne({email}).select("+verificationCode +verificationCodeValidity")
+        
+        if(!user)
+            return res.status(404).json({
+                success:false,
+                message:"User not found"
+            })
+
+        if(exist.verified)
+            return res.status(400).json({
+                success:false,
+                message:"User is already verified"
+            })
+
+        if(!user.verificationCode || !user.verificationCodeValidity)
+            return res.status(400).json({
+                success:false,
+                message:"Something wrong"
+            })
+
+        if(Date.now() - user.verificationCodeValidity > 5*60*1000)
+            res.status(400).json({
+                success:false,
+                message:"code validity expire"
+            })
+        const hashedCode = VerificationCodeService.hmacProccess(providedCode,process.env.HMAC_CODE_VERIFICATION_SECRET)
+        if(hashedCode===user.verificationCodeValidity){
+            user.verified = true,
+            user.verificationCode = undefined,
+            user.verificationCodeValidity = undefined
+            await user.save()
+            return res.status(200).json({
+                success:true,
+                message:"User verified successfull"
+            })
+       
+        }
+        res.status(400).json({
+            success:false,
+            message:"Wrong validation code. Please verify to your email"
+        })
+    } catch (error) {
+        next(error)
+    }
 }
