@@ -118,3 +118,7 @@ export const sendValidationCode = async (req,res,next)=>{
         next(error)
     }
 }
+
+export const verifyVerificationCode = async(req,res,next)=>{
+    
+}
