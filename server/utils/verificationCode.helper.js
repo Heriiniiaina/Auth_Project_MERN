@@ -7,3 +7,5 @@ class VerificationCodeService{
         return result
     }
 }
+
+export default VerificationCodeService

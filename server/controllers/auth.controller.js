@@ -3,6 +3,7 @@ import { User } from "../models/user.model.js"
 import { transport } from "../services/sendMail.service.js"
 import PasswordHelper from "../utils/password.helper.js"
 import TokenHelper from "../utils/token.helper.js"
+import VerificationCodeService from "../utils/verificationCode.helper.js"
 
 export const register = async (req,res,next)=>{
      const {email,password,username} = req.body
@@ -95,6 +96,23 @@ export const sendValidationCode = async (req,res,next)=>{
             to:user.email,
             subject:"<h2> Verification code </h2>",
             html:"<h1>" + verificationCode + "</h1>"
+        })
+
+        if(info.accepted && info.accepted[0]==user.email){
+            const hashedCode = VerificationCodeService.hmacProccess(verificationCode,process.env.HMAC_CODE_VERIFICATION_SECRET)
+            user.verificationCode = hashedCode
+            user.verificationCodeValidity = Date.now()
+
+            await user.save()
+           return res.status(200).json({
+                success:true,
+                message:"Code sent to " + user.email
+            })
+        }
+
+        res.status(400).json({
+            success:false,
+            message:"Code not sent verify your email"
         })
     } catch (error) {
         next(error)
