@@ -135,7 +135,7 @@ export const verifyVerificationCode = async(req,res,next)=>{
                 message:"User not found"
             })
 
-        if(exist.verified)
+        if(user.verified)
             return res.status(400).json({
                 success:false,
                 message:"User is already verified"
@@ -169,6 +169,6 @@ export const verifyVerificationCode = async(req,res,next)=>{
             message:"Wrong validation code. Please verify to your email"
         })
     } catch (error) {
-        next(error)
+        console.log(error);
     }
 }
