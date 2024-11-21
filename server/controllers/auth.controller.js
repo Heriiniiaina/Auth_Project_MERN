@@ -10,8 +10,11 @@ export const register = async (req,res)=>{
         })
     try {
         const {error,value} = registerSchema.validate({email,password,username})
-        if(error)
+        if(error){
+            console.log(error.name)
             return res.status(400).json({message:error.details[0].message})
+
+        }
         const hashedPassword =await PasswordHelper.hashPassword(password)
         const newUser = new User({email,password:hashedPassword,username})
         await newUser.save()
