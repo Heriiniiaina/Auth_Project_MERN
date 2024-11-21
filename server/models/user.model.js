@@ -1,5 +1,4 @@
 
-import { boolean } from "joi";
 import mongoose from "mongoose";
 
 const UserSchema = mongoose.Schema({
@@ -16,7 +15,7 @@ const UserSchema = mongoose.Schema({
         required:true
     },
     verified:{
-        type:boolean,
+        type:Boolean,
         default:false
     },
     verificationCode:{
