@@ -172,3 +172,45 @@ export const verifyVerificationCode = async(req,res,next)=>{
         console.log(error);
     }
 }
+
+export const sendForgotPasswordToken =async (req,res,next)=>{
+    const {email} = req.body
+    if(!email)
+        return res.status(400).json({
+            success:false,
+            message:"Please provide email"    
+        })
+    try {
+        const user = await User.findOne({email})
+        if(!user)
+            return res.status(400).json({
+                success:false,
+                message:"There is no user with this email."
+        })
+
+        const resetPasswordToken = TokenHelper.generateResetPasswordToken()
+        user.forgotPasswordToken = resetPasswordToken
+        user.forgotPasswordTokenValidity = Date.now()
+        await user.save()
+        let info = transport.sendMail({
+            from:process.env.NODE_CODE_SENDING_EMAIL_ADRESS,
+            to:user.email,
+            subject:"Reset password",
+            html:`<h1><a href="${process.env.CLIENT_URL}/reset-password/t${resetPasswordToken}" >Reset password </a>`
+        })
+        if((await info).accepted===user.email){
+            return res.status(200).json({
+                success:true,
+                message:"Reset password send to " + user.email
+            })
+        }
+        res.status(200).json({
+
+        })
+    } catch (error) {
+        console.log(error)
+        next(error)
+        
+    }
+}
+

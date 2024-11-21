@@ -1,6 +1,7 @@
 
 import mongoose from "mongoose";
 
+
 const UserSchema = mongoose.Schema({
     username:{
         type:String,
@@ -29,6 +30,10 @@ const UserSchema = mongoose.Schema({
     },
     forgotPasswordToken:{
         type:String,
+        select:false
+    },
+    forgotPasswordTokenValidity:{
+        type:Number,
         select:false
     }
 },

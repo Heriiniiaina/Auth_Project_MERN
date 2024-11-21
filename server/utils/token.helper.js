@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken"
-
+import crypto from "crypto"
 class TokenHelper{
     static async generateToken(user){
         const payload ={
@@ -9,6 +9,10 @@ class TokenHelper{
         }
         const token = jwt.sign(payload,process.env.JWT_SECRET_KEY,{expiresIn:"8h"})
         return token
+    }
+    static  generateResetPasswordToken(){
+        const result =  crypto.randomBytes(20).toString("hex")
+        return result
     }
 }
 export default TokenHelper
