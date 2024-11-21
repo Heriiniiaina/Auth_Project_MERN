@@ -72,3 +72,7 @@ export const logout = async (req,res,next)=>{
         message:"Logout successfull"
     })
 }
+
+export const sendValidationCode = async (req,res,next)=>{
+    
+}
