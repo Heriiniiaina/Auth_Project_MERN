@@ -6,10 +6,16 @@ export const errorHandler=(err,req,res,next)=>{
         statuscode = 400
         message =validationError
     }
-    else if (err.code = 11000 && err.keyValue){
-        const field = Object.keys(err.keyValue)[0];
-        message = `${field} is already taken`
-        statuscode = 400
+    else if (err.code === 11000) {
+        if (err.keyValue) {
+            const field = Object.keys(err.keyValue)[0];
+            message = `${field} is already taken`;
+            statuscode = 400;
+        } else {
+            console.error("Duplicate key error without keyValue:", err);
+            message = "Duplicate key error";
+            statuscode = 400;
+        }
     }
     else {
         // Gère les erreurs non prévues
