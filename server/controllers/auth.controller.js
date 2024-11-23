@@ -12,7 +12,7 @@ export const register = async (req,res,next)=>{
             message:"Please provide form"
         })
     try {
-        const {error,value} = registerSchema.validate({email,password,username})
+        const {error} = registerSchema.validate({email,password,username})
         if(error){
             throw error
         }
@@ -154,8 +154,8 @@ export const verifyVerificationCode = async(req,res,next)=>{
             })
         const hashedCode = VerificationCodeService.hmacProccess(providedCode,process.env.HMAC_CODE_VERIFICATION_SECRET)
         if(hashedCode===user.verificationCodeValidity){
-            user.verified = true,
-            user.verificationCode = undefined,
+            user.verified = true
+            user.verificationCode = undefined
             user.verificationCodeValidity = undefined
             await user.save()
             return res.status(200).json({
