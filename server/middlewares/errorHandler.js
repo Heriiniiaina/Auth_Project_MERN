@@ -6,12 +6,16 @@ export const errorHandler=(err,req,res,next)=>{
         statuscode = 400
         message =validationError
     }
-    else if (err.code = 11000){
+    else if (err.code = 11000 && err.keyValue){
         const field = Object.keys(err.keyValue)[0];
         message = `${field} is already taken`
         statuscode = 400
     }
-
+    else {
+        // Gère les erreurs non prévues
+        console.error("Unhandled error:", err); // Log pour le développeur
+        message = err.message || "Something went wrong";
+    }
     return res.status(statuscode).json({
         message
     })
