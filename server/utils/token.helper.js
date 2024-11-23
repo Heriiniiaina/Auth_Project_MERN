@@ -14,5 +14,10 @@ class TokenHelper{
         const result =  crypto.randomBytes(20).toString("hex")
         return result
     }
+
+    static verifiedToken(token){
+        const isToken = jwt.verify(token,process.env.JWT_SECRET_KEY)
+        return isToken
+    }
 }
 export default TokenHelper
