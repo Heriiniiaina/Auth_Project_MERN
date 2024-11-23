@@ -198,7 +198,7 @@ export const sendForgotPasswordToken =async (req,res,next)=>{
             subject:"Reset password",
             html:`<h1><a href="${process.env.CLIENT_URL}/reset-password/t${resetPasswordToken}" >Reset password </a>`
         })
-        if((await info).accepted===user.email){
+        if((await info).accepted[0]===user.email){
             return res.status(200).json({
                 success:true,
                 message:"Reset password send to " + user.email
@@ -210,8 +210,11 @@ export const sendForgotPasswordToken =async (req,res,next)=>{
         })
     } catch (error) {
         console.log(error)
-        next(error)
+      
         
     }
 }
 
+export const resetPasword =async (req,res)=>{
+    
+}
