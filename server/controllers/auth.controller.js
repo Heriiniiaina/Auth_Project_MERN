@@ -216,5 +216,29 @@ export const sendForgotPasswordToken =async (req,res,next)=>{
 }
 
 export const resetPasword =async (req,res)=>{
-    
+    const token = req.params.token
+    const {password} = req.body
+    if(!password)
+        return res.status(400).json({
+            success:false,
+            message:"Please provide form"
+        })
+    const user = await User.findOne({ forgotPasswordToken:token})
+    if(!user)
+        return res.status(402).json({
+            success:false,
+            message:"Token non valide"
+        })
+    if(Date.now() - user.forgotPasswordTokenValidity > 5 *60 *1000)
+        return res.status(400).json({
+            success:false,
+            message:"Token expire"
+        })
+    const hashedPassword = await PasswordHelper.hashPassword(password)
+    user.password = hashedPassword
+    await user.save()
+    res.status(200).json({
+        success:true,
+        message:"Password change successfull"
+    })
 }
